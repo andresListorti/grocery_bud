@@ -6,7 +6,7 @@ const submitBtn = document.querySelector('.submit-btn')
 const container = document.querySelector('.grocery-container')
 const list = document.querySelector('.grocery-list')
 const clearBtn = document.querySelector('.clear-btn')
-const deleteBtnn = document.querySelector('.delete-btn')
+const deleteBtn = document.querySelector('.delete-btn')
 
 // edit option
 let editElement;
@@ -23,8 +23,28 @@ form.addEventListener('submit', addItem)
 
 function addItem(e) {
     e.preventDefault();
-    
+    const valorIngresado = grocery.value 
+    const idMundoTimeDelUniverso = new Date().getTime().toString();
+    if(valorIngresado && !editFlag) {
+        console.log('add');
+    } else if(valorIngresado && editFlag) {
+        console.log('editando');
+    } else {
+        displayAlert('Ingrese Un valor', 'danger');
+    }
 }
+
+// display alert
+function displayAlert(text, action) {
+        alert.textContent = text;
+        alert.classList.add(`alert-${action}`);
+        // remove alert
+        setTimeout(function(){
+            alert.textContent = '';
+            alert.classList.remove(`alert-${action}`);
+        }, 1000)
+}
+
 // ****** LOCAL STORAGE **********
 
 // ****** SETUP ITEMS **********
