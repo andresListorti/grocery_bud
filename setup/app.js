@@ -24,6 +24,7 @@ form.addEventListener('submit', addItem);
 clearBtn.addEventListener('click', clearItems);
 
 
+
 // ****** FUNCTIONS **********
 
 function addItem(e) {
@@ -47,7 +48,14 @@ function addItem(e) {
                 <i class="fas fa-trash"> </i>
               </button>
             </div>`;
-            // appen child
+                // aprovecho aca que tengo acceso al elemento creado con los edit y delete y los targeteo ahora, para los event listener a disponibilidad luegio de la carga dinamica del elemento
+                const deleteBtn = elementoCrear.querySelector('.delete-btn');
+                const editBtn = elementoCrear.querySelector('.edit-btn');
+                     deleteBtn.addEventListener('click', deleteItem);
+                        editBtn.addEventListener('click', editItem);
+            
+
+            // appen child ppal
             list.appendChild(elementoCrear);
             // display alert
             displayAlert('Valor agregado', 'success');
@@ -59,7 +67,10 @@ function addItem(e) {
             setBackToDefault();
 
     } else if(valorIngresado && editFlag) {
-        console.log('editando');
+        editElement.innerHTML = valorIngresado;
+        displayAlert('valor cambiado', 'success');
+        editLocalStorage(editId, valorIngresado)
+        setBackToDefault();
     } else {
         displayAlert('Ingrese Un valor', 'danger');
     }
@@ -88,7 +99,40 @@ function clearItems() {
     }
     container.classList.remove('show-container');
     displayAlert('lista vacia', 'success');
+    setBackToDefault();
+    // localStorage.removeItem('list');
 }
+
+
+// delete function 
+function deleteItem(e){
+    const elemento = e.currentTarget.parentElement.parentElement;
+    const id = elemento.dataset.idMundoTimeDelUniverso;
+    list.removeChild(elemento);
+    if(list.children.length === 0){
+        container.classList.remove('show-container');
+    }
+    displayAlert('item removed', 'danger');
+    setBackToDefault();
+    // remove from local storage
+    // removeFromLocalStorage(id);
+}
+
+// edit function
+function editItem(e){
+    const elemento = e.currentTarget.parentElement.parentElement;
+    // set edit element
+    editElement = e.currentTarget.parentElement.previousElementSibling;
+    // set form value
+    grocery.value = editElement.innerHTML;
+    editFlag = true;
+    editId = elemento.dataset.idMundoTimeDelUniverso;
+    submitBtn.textContent = 'edit';
+}
+
+
+
+
 
 // set back to default
 function setBackToDefault(){
@@ -100,7 +144,25 @@ function setBackToDefault(){
 
 // ****** LOCAL STORAGE **********
 function addToLocalStorage(idMundoTimeDelUniverso, valorIngresado){
-    console.log('agregando al local storage');
+    const grocery = {idMundoTimeDelUniverso, valorIngresado}; // esto es ES6 para const grocery = {id:idMundoTimeDelUniverso, value:valorIngresado};
+    
+    let items = localStorage.getItem('list')
+        ? JSON.parse(localStorage.getItem('list')) 
+        : [];
+        console.log(items);
+    items.push(grocery);
+    localStorage.setItem('list', JSON.stringify(items))
 }
+function removeFromLocalStorage(idMundoTimeDelUniverso){}
+function editLocalStorage(idMundoTimeDelUniverso, valorIngresado){}
+// localStorage API
+// setItem
+// getItem
+// removeItem
+// save as strings
+// localStorage.setItem('naranjas', JSON.stringify(['naranjaitem', 'naranjaitem2']))
+// const naranjas = JSON.parse(localStorage.getItem('naranjas'))
+// console.log(naranjas);
+// localStorage.removeItem('naranjas')
 
 // ****** SETUP ITEMS **********
