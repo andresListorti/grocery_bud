@@ -29,17 +29,20 @@ clearBtn.addEventListener('click', clearItems);
 
 function addItem(e) {
     e.preventDefault();
-    const valorIngresado = grocery.value 
-    const idMundoTimeDelUniverso = new Date().getTime().toString();
-    if(valorIngresado && !editFlag) {
+    const value = grocery.value 
+    const id = new Date().getTime().toString();
+   
+
+    if(value && !editFlag) {
         const elementoCrear = document.createElement('article');
         // agregarle clase al elemento creado
         elementoCrear.classList.add('grocery-item');
         // crcear y agregar id como atributo en el camino desde js, para dataset
         const atributoData = document.createAttribute('data-id');
-        atributoData.valorIngresado =  idMundoTimeDelUniverso;
+        console.log(atributoData.value);
+        atributoData.value =  id;
         elementoCrear.setAttributeNode(atributoData);
-        elementoCrear.innerHTML = `<p class="title">${valorIngresado}</p>
+        elementoCrear.innerHTML = `<p class="title">${value}</p>
             <div class="btn-container">
               <button type="button" class="edit-btn">
                 <i class="fas fa-edit"> </i>
@@ -62,14 +65,14 @@ function addItem(e) {
             // mostrar lista
             container.classList.add('show-container');
             // agregar al local storage
-            addToLocalStorage(idMundoTimeDelUniverso, valorIngresado);
+            addToLocalStorage(id, value);
             // set back to default
             setBackToDefault();
 
-    } else if(valorIngresado && editFlag) {
-        editElement.innerHTML = valorIngresado;
+    } else if(value && editFlag) {
+        editElement.innerHTML = value;
         displayAlert('valor cambiado', 'success');
-        editLocalStorage(editId, valorIngresado)
+        editLocalStorage(editId, value)
         setBackToDefault();
     } else {
         displayAlert('Ingrese Un valor', 'danger');
@@ -100,14 +103,16 @@ function clearItems() {
     container.classList.remove('show-container');
     displayAlert('lista vacia', 'success');
     setBackToDefault();
-    // localStorage.removeItem('list');
+    localStorage.removeItem('list');
 }
 
 
 // delete function 
 function deleteItem(e){
     const elemento = e.currentTarget.parentElement.parentElement;
-    const id = elemento.dataset.idMundoTimeDelUniverso;
+    console.log(elemento);
+    const id = elemento.dataset.id;
+    console.log(id);
     list.removeChild(elemento);
     if(list.children.length === 0){
         container.classList.remove('show-container');
@@ -115,7 +120,7 @@ function deleteItem(e){
     displayAlert('item removed', 'danger');
     setBackToDefault();
     // remove from local storage
-    // removeFromLocalStorage(id);
+    removeFromLocalStorage(id);
 }
 
 // edit function
@@ -126,7 +131,7 @@ function editItem(e){
     // set form value
     grocery.value = editElement.innerHTML;
     editFlag = true;
-    editId = elemento.dataset.idMundoTimeDelUniverso;
+    editId = elemento.dataset.id;
     submitBtn.textContent = 'edit';
 }
 
@@ -143,18 +148,52 @@ function setBackToDefault(){
 }
 
 // ****** LOCAL STORAGE **********
-function addToLocalStorage(idMundoTimeDelUniverso, valorIngresado){
-    const grocery = {idMundoTimeDelUniverso, valorIngresado}; // esto es ES6 para const grocery = {id:idMundoTimeDelUniverso, value:valorIngresado};
+function addToLocalStorage(id, value){
+    const grocery = {id, value}; 
     
-    let items = localStorage.getItem('list')
-        ? JSON.parse(localStorage.getItem('list')) 
-        : [];
+    let items = getLocalStorage();
         console.log(items);
     items.push(grocery);
     localStorage.setItem('list', JSON.stringify(items))
 }
-function removeFromLocalStorage(idMundoTimeDelUniverso){}
-function editLocalStorage(idMundoTimeDelUniverso, valorIngresado){}
+
+
+// 
+// 
+function removeFromLocalStorage(id){
+    let items = getLocalStorage();
+    
+    items = items.filter(function(item){
+        if(item.id!== id) {
+            return item 
+        }
+    });
+    localStorage.setItem('list', JSON.stringify(items));
+    
+}
+
+// 
+// 
+
+function editLocalStorage(id, value){
+    let items = getLocalStorage();
+    items = items.map(function(item){
+        if(item.id === id) {
+            item.value = value;
+        }
+        return item
+    })
+    localStorage.setItem('list', JSON.stringify(items));
+
+}
+
+
+function getLocalStorage(){
+     return localStorage.getItem('list')
+        ? JSON.parse(localStorage.getItem('list')) 
+        : [];
+     
+}
 // localStorage API
 // setItem
 // getItem
