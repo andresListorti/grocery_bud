@@ -23,6 +23,9 @@ form.addEventListener('submit', addItem);
 
 clearBtn.addEventListener('click', clearItems);
 
+// load items
+window.addEventListener('DOMContentLoaded', setupItems)
+
 
 
 // ****** FUNCTIONS **********
@@ -34,32 +37,7 @@ function addItem(e) {
    
 
     if(value && !editFlag) {
-        const elementoCrear = document.createElement('article');
-        // agregarle clase al elemento creado
-        elementoCrear.classList.add('grocery-item');
-        // crcear y agregar id como atributo en el camino desde js, para dataset
-        const atributoData = document.createAttribute('data-id');
-        console.log(atributoData.value);
-        atributoData.value =  id;
-        elementoCrear.setAttributeNode(atributoData);
-        elementoCrear.innerHTML = `<p class="title">${value}</p>
-            <div class="btn-container">
-              <button type="button" class="edit-btn">
-                <i class="fas fa-edit"> </i>
-              </button>
-              <button type="button" class="delete-btn">
-                <i class="fas fa-trash"> </i>
-              </button>
-            </div>`;
-                // aprovecho aca que tengo acceso al elemento creado con los edit y delete y los targeteo ahora, para los event listener a disponibilidad luegio de la carga dinamica del elemento
-                const deleteBtn = elementoCrear.querySelector('.delete-btn');
-                const editBtn = elementoCrear.querySelector('.edit-btn');
-                     deleteBtn.addEventListener('click', deleteItem);
-                        editBtn.addEventListener('click', editItem);
-            
-
-            // appen child ppal
-            list.appendChild(elementoCrear);
+        createListItem(id, value)
             // display alert
             displayAlert('Valor agregado', 'success');
             // mostrar lista
@@ -199,9 +177,49 @@ function getLocalStorage(){
 // getItem
 // removeItem
 // save as strings
+
 // localStorage.setItem('naranjas', JSON.stringify(['naranjaitem', 'naranjaitem2']))
 // const naranjas = JSON.parse(localStorage.getItem('naranjas'))
 // console.log(naranjas);
 // localStorage.removeItem('naranjas')
 
 // ****** SETUP ITEMS **********
+
+function setupItems(){
+    let items = getLocalStorage();
+    if(items.length > 0) {
+        items.forEach(function(item){
+        createListItem(item.id, item.value)
+        })
+        container.classList.add('show-container')
+    }
+}
+
+function createListItem(id, value) {
+        const elementoCrear = document.createElement('article');
+        // agregarle clase al elemento creado
+        elementoCrear.classList.add('grocery-item');
+        // crcear y agregar id como atributo en el camino desde js, para dataset
+        const atributoData = document.createAttribute('data-id');
+        console.log(atributoData.value);
+        atributoData.value =  id;
+        elementoCrear.setAttributeNode(atributoData);
+        elementoCrear.innerHTML = `<p class="title">${value}</p>
+            <div class="btn-container">
+              <button type="button" class="edit-btn">
+                <i class="fas fa-edit"> </i>
+              </button>
+              <button type="button" class="delete-btn">
+                <i class="fas fa-trash"> </i>
+              </button>
+            </div>`;
+                // aprovecho aca que tengo acceso al elemento creado con los edit y delete y los targeteo ahora, para los event listener a disponibilidad luegio de la carga dinamica del elemento
+                const deleteBtn = elementoCrear.querySelector('.delete-btn');
+                const editBtn = elementoCrear.querySelector('.edit-btn');
+                     deleteBtn.addEventListener('click', deleteItem);
+                        editBtn.addEventListener('click', editItem);
+            
+
+            // appen child ppal
+            list.appendChild(elementoCrear);
+}
